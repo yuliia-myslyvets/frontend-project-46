@@ -1,18 +1,50 @@
-name: CI
-on: push
+#Name of workflow
+name: "project test"
+
+#Trigger the workflow on push or pull request
+on:
+  - push
+  - pull_request
+
+env:
+  CI: true
+
 jobs:
   build:
+    #The type of machine to run the job on
     runs-on: ubuntu-latest
+
+    strategy:
+      #Node version list
+      matrix:
+        node-version: [16.x]
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+
+      - name: Use Node ${{ matrix.node }}
+        uses: actions/setup-node@v3
         with:
-          node-version: "19.2.0"
-      - run: make install
-      - run: make lint
-      - uses: paambaati/codeclimate-action@v3.0.0
+          node-version: ${{ matrix.node }}
+          cache: "npm"
+        # Run install project
+      - name: npm install
+        run: |
+          make install
         env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+          CI: true
+      - name: Run linter
+        run: |
+          make lint
+      - name:
+          Test & publish code coverage
+          # Publish code coverage on Code Climate
+          # https://github.com/paambaati/codeclimate-action
+        uses:
+          paambaati/codeclimate-action@v3.2.0
+          # Add Code Climate secret key
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.TEST_COVERAGE }}
         with:
           coverageCommand: make test-coverage
           debug: true
