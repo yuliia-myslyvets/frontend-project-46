@@ -2,9 +2,9 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "[![Actions Status](https://github.com/yuliia-myslyvets/frontend-project-46/workflows/hexlet-check/badge.svg)](https://github.com/yuliia-myslyvets/frontend-project-46/actions)",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
-    "test": "npx jest"
+    "test": "jest --experimental-vm-modules"
   },
   "repository": {
     "type": "git",
