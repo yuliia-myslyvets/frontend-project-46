@@ -7,7 +7,7 @@ const getAbsolutPath = (filepath) => path.resolve(process.cwd(), filepath);
 
 const readFile = (filepath) => readFileSync(getAbsolutPath(filepath), "utf-8");
 
-const getFormat = (filename) => filename.split(".")[1];
+// const getFormat = (filename) => filename.split(".")[1];
 
 const getDiff = (obj1, obj2) => {
   const result = [];
