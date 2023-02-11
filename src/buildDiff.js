@@ -41,7 +41,7 @@ const format = (diff) => {
     if (element.status === -1) {
       character = "-";
     }
-    stringResult = `\t${character} ${element.key}: ${element.value}\n`;
+    stringResult = `  ${character} ${element.key}: ${element.value}\n`;
     result = result + stringResult;
   }
   result = `${result}}`;

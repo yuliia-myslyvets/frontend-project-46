@@ -4,6 +4,3 @@ indent_style = tab
 [*.js]
 indent_style = space
 indent_size = 2
-
-[*.txt]
-indent_style = tab
