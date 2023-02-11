@@ -4,7 +4,7 @@
   "description": "[![Actions Status](https://github.com/yuliia-myslyvets/frontend-project-46/workflows/hexlet-check/badge.svg)](https://github.com/yuliia-myslyvets/frontend-project-46/actions)",
   "main": "index.js",
   "scripts": {
-    "test": "jest --experimental-vm-modules",
+    "test": "jest",
     "test-watch": "npx -n '--experimental-vm-modules  --no-warnings' jest --watchAll"
   },
   "repository": {
