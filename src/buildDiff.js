@@ -2,6 +2,7 @@ import _ from "lodash";
 import { readFileSync } from "fs";
 import path from "path";
 import process from "process";
+import parse from "./parsers.js";
 
 const getAbsolutPath = (filepath) => path.resolve(process.cwd(), filepath);
 
@@ -51,8 +52,8 @@ const format = (diff) => {
 const buildDiff = (filepath1, filepath2) => {
   const data1 = readFile(filepath1);
   const data2 = readFile(filepath2);
-  const obj1 = JSON.parse(data1);
-  const obj2 = JSON.parse(data2);
+  const obj1 = parse(data1, path.extname(filepath1));
+  const obj2 = parse(data2, path.extname(filepath2));
   const diff = getDiff(obj1, obj2);
   const formatDiff = format(diff);
   return formatDiff;
