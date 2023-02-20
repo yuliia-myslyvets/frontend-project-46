@@ -3,6 +3,7 @@ import { readFileSync } from "fs";
 import path from "path";
 import process from "process";
 import parse from "./parsers.js";
+import formatter from "./formatters/formatter.js";
 
 const getAbsolutPath = (filepath) => path.resolve(process.cwd(), filepath);
 
@@ -14,13 +15,27 @@ const getDiff = (obj1, obj2) => {
   const result = [];
 
   for (const key in obj1) {
-    if (obj1[key] === obj2[key]) {
-      result.push({ key, value: obj1[key], status: 0 });
-    } else result.push({ key, value: obj1[key], status: -1 });
+    const value1 = obj1[key];
+    const value2 = obj2[key];
+
+    if (_.isObject(value1) && _.isObject(value2)) {
+      const diff = getDiff(value1, value2);
+      result.push({ key, value: diff, status: 0 });
+    } else if (value1 === value2) {
+      result.push({ key, value: value1, status: 0 });
+    } else {
+      result.push({ key, value: value1, status: -1 });
+    }
   }
+
   for (const key in obj2) {
-    if (obj2[key] !== obj1[key]) {
-      result.push({ key, value: obj2[key], status: 1 });
+    const value1 = obj1[key];
+    const value2 = obj2[key];
+
+    if (_.isObject(value1) && _.isObject(value2)) continue;
+
+    if (value2 !== value1) {
+      result.push({ key, value: value2, status: 1 });
     }
   }
 
@@ -28,46 +43,14 @@ const getDiff = (obj1, obj2) => {
   return sortResult;
 };
 
-const format = (diff) => {
-  let result = "{\n";
-  let stringResult;
-  for (const element of diff) {
-    let character;
-    if (element.status === 1) {
-      character = "+";
-    }
-    if (element.status === 0) {
-      character = " ";
-    }
-    if (element.status === -1) {
-      character = "-";
-    }
-    stringResult = `  ${character} ${element.key}: ${element.value}\n`;
-    result = result + stringResult;
-  }
-  result = `${result}}`;
-  return result;
-};
-
-const buildDiff = (filepath1, filepath2) => {
+const buildDiff = (filepath1, filepath2, formatName = "stylish") => {
   const data1 = readFile(filepath1);
   const data2 = readFile(filepath2);
   const obj1 = parse(data1, path.extname(filepath1));
   const obj2 = parse(data2, path.extname(filepath2));
   const diff = getDiff(obj1, obj2);
-  const formatDiff = format(diff);
+  const formatDiff = formatter(diff, formatName);
   return formatDiff;
 };
 
 export default buildDiff;
-
-// console.log(
-//   format([
-//     { key: "follow", value: false, status: -1 },
-//     { key: "host", value: "hexlet.io", status: 0 },
-//     { key: "proxy", value: "123.234.53.22", status: -1 },
-//     { key: "timeout", value: 50, status: -1 },
-//     { key: "timeout", value: 20, status: 1 },
-//     { key: "verbose", value: true, status: 1 },
-//   ])
-// );

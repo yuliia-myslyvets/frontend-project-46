@@ -11,3 +11,6 @@ https://asciinema.org/connect/12cf984c-7b54-46ca-ba00-f2f974d75500
 
 Compare yaml files:
 https://asciinema.org/a/8BmnOyQPu7TUhCBSNbP2ikDTa
+
+Compare tree :
+https://asciinema.org/a/4gLNol5UkjdbcGDNNIaF5EkK8
