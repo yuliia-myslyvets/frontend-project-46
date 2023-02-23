@@ -1,6 +1,6 @@
-import _ from "lodash";
+import _ from 'lodash';
 
-const defaultIndent = "    ";
+const defaultIndent = '    ';
 
 export const prepareValue = (obj, depth) => {
   if (!_.isObject(obj)) return obj;
@@ -8,64 +8,66 @@ export const prepareValue = (obj, depth) => {
   const indent = defaultIndent.repeat(depth + 1);
 
   const [head, ...tail] = JSON.stringify(obj, null, defaultIndent)
-    .replaceAll('"', "")
-    .replaceAll(",", "")
-    .split("\n");
+    .replaceAll('"', '')
+    .replaceAll(',', '')
+    .split('\n');
 
   const formatedTail = tail.map((line) => `${indent}${line}`);
 
-  return [head, ...formatedTail].join("\n");
+  return [head, ...formatedTail].join('\n');
 };
 
 const format = (diff) => {
-  const iter = (diff, depth) => {
+  const iter = (obj, depth) => {
     const indent = defaultIndent.repeat(depth);
 
-    const formatedDiff = diff.flatMap((element) => {
+    const formatedDiff = obj.flatMap((element) => {
       switch (element.status) {
-        case "added":
+        case 'added':
           return [
             `${indent}  + ${element.name}: ${prepareValue(
               element.newValue,
-              depth
+              depth,
             )}`,
           ];
-        case "removed":
+        case 'removed':
           return [
             `${indent}  - ${element.name}: ${prepareValue(
               element.oldValue,
-              depth
+              depth,
             )}`,
           ];
-        case "unchanged":
+        case 'unchanged':
           return [
             `${indent}    ${element.name}: ${prepareValue(
               element.oldValue,
-              depth
+              depth,
             )}`,
           ];
-        case "updated":
+        case 'updated':
           return [
             `${indent}  - ${element.name}: ${prepareValue(
               element.oldValue,
-              depth
+              depth,
             )}`,
             `${indent}  + ${element.name}: ${prepareValue(
               element.newValue,
-              depth
+              depth,
             )}`,
           ];
-        case "nested":
+        case 'nested':
           return [
             `${indent}    ${element.name}: ${iter(
               element.children,
-              depth + 1
+              depth + 1,
             )}`,
           ];
+        default:
+          throw new Error('This state is not supported.');
       }
     });
 
-    return ["{", formatedDiff, `${indent}}`].flat().join("\n");
+    return ['{', formatedDiff, `${indent}}`].flat().join('\n');
   };
   return iter(diff, 0);
 };

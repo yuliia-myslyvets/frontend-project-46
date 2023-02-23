@@ -1,18 +1,15 @@
+root: true
+
 env:
-  browser: true
-  es2021: true
+  node: true
+
 extends:
-  - eslint:recommended
-  - plugin:import/recommended
-overrides: []
+  - 'airbnb-base'
+  - 'plugin:jest/recommended'
+
 parserOptions:
   ecmaVersion: latest
-  sourceType: module
-rules:
-  no-console: 0
-  import/extensions:
-    - error
-    - ignorePackages
-    - js: always
-  no-underscore-dangle: [2, { "allow": ["__filename", "__dirname"] }] # разрешает подчёркивание в именах только для двух констант
 
+rules:
+  import/extensions: 0
+  no-underscore-dangle: [2, { "allow": ["__filename", "__dirname"] }]

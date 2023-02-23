@@ -1,17 +1,17 @@
-import stylishFormat from "./stylish.js";
-import plainFormat from "./plain.js";
-import jsonFormat from "./json.js";
+import stylishFormat from './stylish.js';
+import plainFormat from './plain.js';
+import jsonFormat from './json.js';
 
 const formatter = (diff, formatName) => {
   switch (formatName) {
-    case "stylish":
+    case 'stylish':
       return stylishFormat(diff);
-    case "plain":
+    case 'plain':
       return plainFormat(diff);
-    case "json":
+    case 'json':
       return jsonFormat(diff);
     default:
-      throw new Error(`This format is not supported.`);
+      throw new Error('This format is not supported.');
   }
 };
 

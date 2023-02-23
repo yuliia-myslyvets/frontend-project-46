@@ -1,8 +1,8 @@
-import _ from "lodash";
+import _ from 'lodash';
 
 const prepareValue = (value) => {
   if (_.isObject(value)) {
-    return "[complex value]";
+    return '[complex value]';
   }
   if (_.isString(value)) {
     return `'${value}'`;
@@ -12,37 +12,37 @@ const prepareValue = (value) => {
 
 const iter = (diff, basePath) => {
   const onlyChangedProperties = diff.filter(
-    (item) => item.status !== "unchanged"
+    (item) => item.status !== 'unchanged',
   );
   const output = onlyChangedProperties
     .map((item) => {
       const currentPath = [...basePath, item.name];
-      const property = currentPath.join(".");
+      const property = currentPath.join('.');
 
       switch (item.status) {
-        case "added":
+        case 'added':
           return `Property '${property}' was added with value: ${prepareValue(
-            item.newValue
+            item.newValue,
           )}`;
 
-        case "removed":
+        case 'removed':
           return `Property '${property}' was removed`;
 
-        case "updated":
+        case 'updated':
           return `Property '${property}' was updated. From ${prepareValue(
-            item.oldValue
+            item.oldValue,
           )} to ${prepareValue(item.newValue)}`;
-        case "nested":
+        case 'nested':
           return iter(item.children, currentPath);
+        default:
+          throw new Error('This state is not supported.');
       }
     })
-    .join("\n");
+    .join('\n');
 
   return output;
 };
 
-const format = (diff) => {
-  return iter(diff, []);
-};
+const format = (diff) => iter(diff, []);
 
 export default format;
