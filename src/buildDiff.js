@@ -3,44 +3,48 @@ import { readFileSync } from "fs";
 import path from "path";
 import process from "process";
 import parse from "./parsers.js";
-import formatter from "./formatters/formatter.js";
+import formatter from "./formatters/index.js";
 
 const getAbsolutPath = (filepath) => path.resolve(process.cwd(), filepath);
 
 const readFile = (filepath) => readFileSync(getAbsolutPath(filepath), "utf-8");
 
-// const getFormat = (filename) => filename.split(".")[1];
-
 const getDiff = (obj1, obj2) => {
-  const result = [];
+  const key1 = Object.keys(obj1);
+  const key2 = Object.keys(obj2);
 
-  for (const key in obj1) {
-    const value1 = obj1[key];
-    const value2 = obj2[key];
+  const uniqKeys = _.union(key1, key2);
+  const sortedKeys = _.sortBy(uniqKeys);
 
-    if (_.isObject(value1) && _.isObject(value2)) {
-      const diff = getDiff(value1, value2);
-      result.push({ key, value: diff, status: 0 });
-    } else if (value1 === value2) {
-      result.push({ key, value: value1, status: 0 });
-    } else {
-      result.push({ key, value: value1, status: -1 });
+  return sortedKeys.map((key) => {
+    if (!_.has(obj1, key)) {
+      return { name: key, newValue: obj2[key], status: "added" };
     }
-  }
-
-  for (const key in obj2) {
-    const value1 = obj1[key];
-    const value2 = obj2[key];
-
-    if (_.isObject(value1) && _.isObject(value2)) continue;
-
-    if (value2 !== value1) {
-      result.push({ key, value: value2, status: 1 });
+    if (!_.has(obj2, key)) {
+      return { name: key, oldValue: obj1[key], status: "removed" };
     }
-  }
-
-  const sortResult = _.sortBy(result, ["key", "status"]);
-  return sortResult;
+    if (_.isObject(obj1[key]) && _.isObject(obj2[key])) {
+      return {
+        name: key,
+        children: getDiff(obj1[key], obj2[key]),
+        status: "nested",
+      };
+    }
+    if (!_.isEqual(obj1[key], obj2[key])) {
+      return {
+        name: key,
+        oldValue: obj1[key],
+        newValue: obj2[key],
+        status: "updated",
+      };
+    }
+    return {
+      name: key,
+      oldValue: obj1[key],
+      newValue: obj2[key],
+      status: "unchanged",
+    };
+  });
 };
 
 const buildDiff = (filepath1, filepath2, formatName = "stylish") => {

@@ -1,13 +1,14 @@
 import stylishFormat from "./stylish.js";
+import plainFormat from "./plain.js";
 
 const formatter = (diff, formatName) => {
   switch (formatName) {
     case "stylish":
       return stylishFormat(diff);
+    case "plain":
+      return plainFormat(diff);
     default:
-      throw new Error(
-        `This format is not supported. Please read the documentation and use the available formats`
-      );
+      throw new Error(`This format is not supported.`);
   }
 };
 

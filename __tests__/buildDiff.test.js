@@ -33,9 +33,16 @@ const jsonPath2 = getFixturePath("file2.json");
 const yamlPath1 = getFixturePath("file1.yml");
 const ymlPath2 = getFixturePath("file2.yml");
 
-const stylishResult = readFile("result.txt");
+const stylishResult = readFile("stylishResult.txt");
 
 test("displaying file differences in stylish form", () => {
   expect(buildDiff(jsonPath1, jsonPath2, "stylish")).toBe(stylishResult);
   expect(buildDiff(yamlPath1, ymlPath2, "stylish")).toBe(stylishResult);
+});
+
+const plainResult = readFile("plainResult.txt");
+
+test("displaying file differences in plain form", () => {
+  expect(buildDiff(jsonPath1, jsonPath2, "plain")).toBe(plainResult);
+  expect(buildDiff(yamlPath1, ymlPath2, "plain")).toBe(plainResult);
 });

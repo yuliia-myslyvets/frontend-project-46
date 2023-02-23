@@ -2,7 +2,9 @@ import _ from "lodash";
 
 const defaultIndent = "    ";
 
-export const stringify = (obj, depth) => {
+export const prepareValue = (obj, depth) => {
+  if (!_.isObject(obj)) return obj;
+
   const indent = defaultIndent.repeat(depth + 1);
 
   const [head, ...tail] = JSON.stringify(obj, null, defaultIndent)
@@ -15,34 +17,57 @@ export const stringify = (obj, depth) => {
   return [head, ...formatedTail].join("\n");
 };
 
-const iter = (diff, depth) => {
-  const indent = defaultIndent.repeat(depth);
+const format = (diff) => {
+  const iter = (diff, depth) => {
+    const indent = defaultIndent.repeat(depth);
 
-  const formatedDiff = diff.map((element) => {
-    let character;
-    if (element.status === 1) {
-      character = "  + ";
-    }
-    if (element.status === 0) {
-      character = "    ";
-    }
-    if (element.status === -1) {
-      character = "  - ";
-    }
-    const value = Array.isArray(element.value)
-      ? iter(element.value, depth + 1)
-      : _.isObject(element.value)
-      ? stringify(element.value, depth)
-      : element.value;
+    const formatedDiff = diff.flatMap((element) => {
+      switch (element.status) {
+        case "added":
+          return [
+            `${indent}  + ${element.name}: ${prepareValue(
+              element.newValue,
+              depth
+            )}`,
+          ];
+        case "removed":
+          return [
+            `${indent}  - ${element.name}: ${prepareValue(
+              element.oldValue,
+              depth
+            )}`,
+          ];
+        case "unchanged":
+          return [
+            `${indent}    ${element.name}: ${prepareValue(
+              element.oldValue,
+              depth
+            )}`,
+          ];
+        case "updated":
+          return [
+            `${indent}  - ${element.name}: ${prepareValue(
+              element.oldValue,
+              depth
+            )}`,
+            `${indent}  + ${element.name}: ${prepareValue(
+              element.newValue,
+              depth
+            )}`,
+          ];
+        case "nested":
+          return [
+            `${indent}    ${element.name}: ${iter(
+              element.children,
+              depth + 1
+            )}`,
+          ];
+      }
+    });
 
-    return `${indent}${character}${element.key}: ${value}`;
-  });
-
-  return ["{", formatedDiff, `${indent}}`].flat().join("\n");
-};
-
-const stylishFormat = (diff) => {
+    return ["{", formatedDiff, `${indent}}`].flat().join("\n");
+  };
   return iter(diff, 0);
 };
 
-export default stylishFormat;
+export default format;
