@@ -7,14 +7,15 @@ export const prepareValue = (obj, depth) => {
 
   const indent = defaultIndent.repeat(depth + 1);
 
-  const [head, ...tail] = JSON.stringify(obj, null, defaultIndent)
+  const tail = JSON.stringify(obj, null, defaultIndent)
     .replaceAll('"', '')
     .replaceAll(',', '')
-    .split('\n');
+    .split('\n')
+    .slice(1);
 
   const formatedTail = tail.map((line) => `${indent}${line}`);
 
-  return [head, ...formatedTail].join('\n');
+  return ['{', ...formatedTail].join('\n');
 };
 
 const format = (diff) => {
