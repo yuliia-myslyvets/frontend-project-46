@@ -17,3 +17,6 @@ https://asciinema.org/a/4gLNol5UkjdbcGDNNIaF5EkK8
 
 Compare tree in plain format:
 https://asciinema.org/a/YEVyOh8MBWC1PEaecB1WqFNfM
+
+Compare tree in json format:
+https://asciinema.org/a/DIGpeYBvsKt7JKKJEH0Wa6a2N
